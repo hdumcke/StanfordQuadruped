@@ -2,7 +2,8 @@
 Description=Robot control service
 
 [Service]
-ExecStart=/home/ubuntu/StanfordQuadruped/run_robot_ros.sh
+User=ubuntu
+ExecStart=/bin/bash --login -c 'source /home/ubuntu/.bashrc; /home/ubuntu/StanfordQuadruped/run_robot_ros.sh'
 KillSignal=2
 TimeoutStopSec=10
 

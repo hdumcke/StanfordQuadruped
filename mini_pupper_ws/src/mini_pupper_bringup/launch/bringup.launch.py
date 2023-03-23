@@ -53,30 +53,11 @@ def generate_launch_description():
 				name='teleop_twist_joy_node',
 				parameters=[teleop_config_filepath]
 			),
-
-			launch_ros.actions.Node(
-				package='robot_localization',
-				executable='ekf_node',
-				name='ekf_filter_node',
-				output='screen',
-				parameters=[robot_localization_config_filepath],
-                remappings=[("imu", "imu/raw_data")]
-			),
             
     		launch_ros.actions.Node(
         		package='joint_state_publisher',
         		executable='joint_state_publisher'
         	),
-
-			launch_ros.actions.Node(
-        		package='robot_state_publisher',
-        		executable='robot_state_publisher',
-        		parameters=[{'robot_description': robot_description}]
-    		),
-
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(lidar_launch_path),
-            )
 
 		]
     ) # return LD

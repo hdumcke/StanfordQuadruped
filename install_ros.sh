@@ -37,7 +37,7 @@ rosdep update && rosdep install --from-path src --ignore-src -y --skip-keys micr
 sudo pip install setuptools==58.2.0 # suppress colcon build warning
 colcon build --executor sequential --symlink-install
 
-cd ~StanfordQuadruped
+cd ~/StanfordQuadruped
 sudo ln -s $(realpath .)/robot-ros.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable robot-ros
