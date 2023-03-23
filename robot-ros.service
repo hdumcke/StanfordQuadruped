@@ -1,0 +1,10 @@
+[Unit]
+Description=Robot control service
+
+[Service]
+ExecStart=/home/ubuntu/StanfordQuadruped/run_robot_ros.sh
+KillSignal=2
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

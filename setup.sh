@@ -1,8 +1,8 @@
 #!/bin/bash
 ######################################################################################
-# Stanford (test environment)
+# Stanford
 #
-# This stack will consist of mock_api
+# This stack will consist of board support package (mini_pupper_bsp),
 #    the StanfordQuadruped controller and the mini_pupper_web_controller
 #
 # After installation you can either pair a supported PS4 joystick or
@@ -15,6 +15,7 @@
 ######################################################################################
 
 set -e
+echo "setup.sh started at $(date)"
 
 ### Get directory where this script is installed
 BASEDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -29,12 +30,19 @@ then
     exit 1
 fi
 
+# check parameters
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <ssid> <wifi password>"
+    exit 1
+fi
+
 cd ~
-git clone https://github.com/mangdangroboticsclub/mini_pupper_2_bsp.git mini_pupper_bsp
-git clone https://github.com/mangdangroboticsclub/mini_pupper_web_controller.git
-sudo apt-get update
-sudo apt-get -y install python3 python3-pip python-is-python3 python3-venv python3-virtualenv
-sudo PBR_VERSION=$(cd ~/mini_pupper_bsp; ./get-version.sh) pip install ~/mini_pupper_bsp/mock_api
+git clone https://github.com/mangdangroboticsclub/mini_pupper_2_bsp.git  mini_pupper_bsp
+[[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.git
+./mini_pupper_bsp/install.sh
 
 cd StanfordQuadruped
 ./install_ros.sh
+./configure_network.sh $1 "$2"
+echo "setup.sh finished at $(date)"
+sudo reboot

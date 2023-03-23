@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'mini_pupper'
+package_name = 'mini_pupper_controller'
 
 setup(
     name=package_name,
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'mini_pupper = mini_pupper.mini_pupper:main'
+            'mini_pupper_controller = mini_pupper_controller.mini_pupper_controller:main'
         ],
     },
 )
