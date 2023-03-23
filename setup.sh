@@ -30,12 +30,6 @@ then
     exit 1
 fi
 
-# check parameters
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <ssid> <wifi password>"
-    exit 1
-fi
-
 cd ~
 git clone https://github.com/mangdangroboticsclub/mini_pupper_2_bsp.git  mini_pupper_bsp
 [[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.git
@@ -43,6 +37,5 @@ git clone https://github.com/mangdangroboticsclub/mini_pupper_2_bsp.git  mini_pu
 
 cd StanfordQuadruped
 ./install_ros.sh
-./configure_network.sh $1 "$2"
 echo "setup.sh finished at $(date)"
 sudo reboot
