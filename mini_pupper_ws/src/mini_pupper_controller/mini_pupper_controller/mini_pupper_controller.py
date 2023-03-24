@@ -99,6 +99,9 @@ class MiniPupper(Node):
         # Update the pwm widths going to the servos
         self.hardware_interface.set_actuator_postions(self.state.joint_angles)
 
+        # switch to TROT
+        self.state.behavior_state = BehaviorState.TROT
+
     def listener_callback(self, msg):
         if self.time_last is None:
             self.time_last = self.get_clock().now().nanoseconds
