@@ -31,11 +31,8 @@ cd ~
 git clone https://github.com/Tiryoh/ros2_setup_scripts_ubuntu.git
 ./ros2_setup_scripts_ubuntu/run.sh
 
-sudo apt install -y ros-humble-xacro
 source /opt/ros/humble/setup.bash
-git clone -b ros2 https://github.com/mangdangroboticsclub/mini_pupper_ros.git
 cd ~/StanfordQuadruped/mini_pupper_ws
-cp -r ~/mini_pupper_ros/mini_pupper_description src/
 rosdep update && rosdep install --from-path src --ignore-src -y --skip-keys microxrcedds_agent --skip-keys micro_ros_agent
 sudo pip install setuptools==58.2.0 # suppress colcon build warning
 colcon build --executor sequential --symlink-install
