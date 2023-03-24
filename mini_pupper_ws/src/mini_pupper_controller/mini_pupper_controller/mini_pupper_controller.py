@@ -45,7 +45,8 @@ class MiniPupper(Node):
             four_legs_inverse_kinematics,
         )
         self.state = State()
-        self.state.behavior_state = BehaviorState.TROT
+        self.state.behavior_state = BehaviorState.REST
+        self.set_rest_state = True
 
         self.last_loop = int(self.get_clock().now().nanoseconds / 1e9)
 
@@ -74,8 +75,10 @@ class MiniPupper(Node):
             return
         # self.time_now set by cmd_vel subscriber
         if self.get_clock().now().nanoseconds - self.time_now > self.active_timeout * 2e+9:
-            self.disp.show_state(BehaviorState.REST)
-            return
+            if not self.set_rest_state:
+                self.disp.show_state(BehaviorState.DEACTIVATED)
+                return
+        self.set_rest_state = False    
         # Standford time check now = int(self.get_clock().now().nanoseconds / 1e9)
         now = int(self.get_clock().now().nanoseconds / 1e9)
         if now - self.last_loop < self.config.dt:
