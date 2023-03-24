@@ -99,7 +99,7 @@ packages:
 - git
 runcmd:
 - [ su, ubuntu, -c, "git clone -b mini_pupper_ros2 https://github.com/hdumcke/StanfordQuadruped.git /home/ubuntu/StanfordQuadruped" ]
-- [ su, ubuntu, -c, "/home/ubuntu/StanfordQuadruped/setup.sh 2> /home/ubuntu/.setup_err.log > /home/ubuntu/.setup_out.log" ]
+- [ su, ubuntu, -c, "/home/ubuntu/StanfordQuadruped/%s 2> /home/ubuntu/.setup_err.log > /home/ubuntu/.setup_out.log" ]
 - [ reboot ]
 """
 
