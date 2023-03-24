@@ -28,7 +28,7 @@ class MiniPupper(Node):
         self.subscription  # prevent unused variable warning
         self.time_last = None
         self.time_now = None
-        timer_period = 0.1  # seconds
+        timer_period = 0.01  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.v_x = 0.
         self.v_z = 0.

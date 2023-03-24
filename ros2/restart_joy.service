@@ -1,0 +1,11 @@
+[Unit]
+Description=Joystick restart service
+Requires=robot-ros.service
+After=robot-ros.service
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/bash /home/ubuntu/StanfordQuadruped/ros2/restart_joy.sh
+
+[Install]
+WantedBy=multi-user.target

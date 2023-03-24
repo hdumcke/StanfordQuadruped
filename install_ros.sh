@@ -32,13 +32,17 @@ colcon build --executor sequential --symlink-install
 
 cd ~/StanfordQuadruped/ros2
 sudo adduser ubuntu input
+sudo pip install ds4drv
 sudo ln -s $(realpath .)/robot-ros.service /etc/systemd/system/
 sudo ln -s $(realpath .)/joystick.service /etc/systemd/system/
+sudo ln -s $(realpath .)/restart_joy.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable robot-ros
 sudo systemctl start robot-ros
 sudo systemctl enable joystick
 sudo systemctl start joystick
+sudo systemctl enable restart_joy
+sudo systemctl start restart_joy
 
 # Cyclon DDS
 sudo apt install -y ros-humble-rmw-cyclonedds-cpp
