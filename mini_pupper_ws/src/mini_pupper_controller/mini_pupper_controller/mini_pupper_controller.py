@@ -74,6 +74,7 @@ class MiniPupper(Node):
             return
         # self.time_now set by cmd_vel subscriber
         if self.get_clock().now().nanoseconds - self.time_now > self.active_timeout * 2e+9:
+            self.disp.show_state(BehaviorState.REST)
             return
         # Standford time check now = int(self.get_clock().now().nanoseconds / 1e9)
         now = int(self.get_clock().now().nanoseconds / 1e9)

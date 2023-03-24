@@ -37,7 +37,7 @@ def generate_launch_description():
 			launch_ros.actions.Node(
 				package='mini_pupper_controller',
 				executable='mini_pupper_controller',
-				name='_mini_pupper_controller_node',
+				name='mini_pupper_controller_node',
 			),  
 					
 			launch_ros.actions.Node(
