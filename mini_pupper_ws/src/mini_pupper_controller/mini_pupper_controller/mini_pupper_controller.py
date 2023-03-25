@@ -48,7 +48,7 @@ class MiniPupper(Node):
         self.state.behavior_state = BehaviorState.REST
         self.set_rest_state = True
 
-        self.last_loop = int(self.get_clock().now().nanoseconds / 1e9)
+        self.last_loop = self.get_clock().now().nanoseconds
 
         self.get_logger().info("Summary of gait parameters:")
         self.get_logger().info("overlap time: %s" % self.config.overlap_time)
@@ -74,16 +74,16 @@ class MiniPupper(Node):
         if self.time_now is None:
             return
         # self.time_now set by cmd_vel subscriber
-        if self.get_clock().now().nanoseconds - self.time_now > self.active_timeout * 2e+9:
+        if self.get_clock().now().nanoseconds - self.time_now > self.active_timeout * 1e+9:
             if not self.set_rest_state:
                 self.disp.show_state(BehaviorState.DEACTIVATED)
                 return
         self.set_rest_state = False    
         # Standford time check now = int(self.get_clock().now().nanoseconds / 1e9)
-        now = int(self.get_clock().now().nanoseconds / 1e9)
-        if now - self.last_loop < self.config.dt:
+        now = self.get_clock().now().nanoseconds
+        if now - self.last_loop < self.config.dt * 1e9:
             return
-        self.last_loop = int(self.get_clock().now().nanoseconds / 1e9)
+        self.last_loop = self.get_clock().now().nanoseconds
 
         command = self.get_command()
 
