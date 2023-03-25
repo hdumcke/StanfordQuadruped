@@ -58,8 +58,8 @@ class MiniPupper(Node):
 
         command = Command()
 
-        x_vel = self.v_z * self.config.max_x_velocity
-        y_vel = self.v_x * -self.config.max_y_velocity
+        x_vel = self.v_x * self.config.max_x_velocity
+        y_vel = self.v_z * -self.config.max_y_velocity
         command.horizontal_velocity = np.array([x_vel, y_vel])
 
         return command
