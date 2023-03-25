@@ -29,7 +29,6 @@ class MiniPupper(Node):
         self.time_last = None
         self.time_now = None
         timer_period = 0.01  # seconds
-        self.timer = self.create_timer(timer_period, self.timer_callback)
         self.v_x = 0.
         self.v_z = 0.
         self.active_timeout = 0.5
@@ -39,6 +38,7 @@ class MiniPupper(Node):
         self.hardware_interface = HardwareInterface()
         self.disp = Display()
         self.disp.show_ip()
+        self.timer = self.create_timer(self.config.dt, self.timer_callback)
 
         self.controller = Controller(
             self.config,
@@ -47,8 +47,6 @@ class MiniPupper(Node):
         self.state = State()
         self.state.behavior_state = BehaviorState.REST
         self.set_rest_state = True
-
-        self.last_loop = self.get_clock().now().nanoseconds
 
         self.get_logger().info("Summary of gait parameters:")
         self.get_logger().info("overlap time: %s" % self.config.overlap_time)
@@ -60,8 +58,8 @@ class MiniPupper(Node):
 
         command = Command()
 
-        x_vel = self.v_x * self.config.max_x_velocity
-        y_vel = self.v_z * -self.config.max_y_velocity
+        x_vel = self.v_z * self.config.max_x_velocity
+        y_vel = self.v_x * -self.config.max_y_velocity
         command.horizontal_velocity = np.array([x_vel, y_vel])
 
         return command
@@ -76,14 +74,10 @@ class MiniPupper(Node):
         # self.time_now set by cmd_vel subscriber
         if self.get_clock().now().nanoseconds - self.time_now > self.active_timeout * 1e+9:
             if not self.set_rest_state:
-                self.disp.show_state(BehaviorState.DEACTIVATED)
+                self.state.behavior_state = BehaviorState.REST
+                self.disp.show_state(BehaviorState.REST)
                 return
         self.set_rest_state = False    
-        # Standford time check now = int(self.get_clock().now().nanoseconds / 1e9)
-        now = self.get_clock().now().nanoseconds
-        if now - self.last_loop < self.config.dt * 1e9:
-            return
-        self.last_loop = self.get_clock().now().nanoseconds
 
         command = self.get_command()
 
@@ -100,6 +94,7 @@ class MiniPupper(Node):
         self.hardware_interface.set_actuator_postions(self.state.joint_angles)
 
         # switch to TROT
+        # we have to cycle through REST at least once to set initial state
         self.state.behavior_state = BehaviorState.TROT
 
     def listener_callback(self, msg):
