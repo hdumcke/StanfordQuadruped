@@ -12,6 +12,7 @@ import os
 ##############################################################
 
 target_environment = {}
+hardware_version = ['v1', 'v2']
 
 
 def write_cache(cache_file):
@@ -32,6 +33,11 @@ def ask_questions():
         ask_user("Your WiFi password", 'wifi_password')
     if not 'ubuntu_password' in target_environment.keys():
         ask_user("Horo user password", 'ubuntu_password')
+    if not 'hardware_version' in target_environment.keys():
+        print("Which Mini Pupper Hardware do you want to install:\n")
+        for i in range(len(hardware_version)):
+            print("%s: %s" % (i + 1, hardware_version[i]))
+        ask_user("Please enter number", 'hardware_version')
     if not 'sd_path' in target_environment.keys():
         ask_user("Full path to SD card", 'sd_path')
 
@@ -99,10 +105,11 @@ packages:
 - git
 runcmd:
 - [ su, ubuntu, -c, "git clone -b mini_pupper_ros2 https://github.com/hdumcke/StanfordQuadruped.git /home/ubuntu/StanfordQuadruped" ]
-- [ su, ubuntu, -c, "/home/ubuntu/StanfordQuadruped/%s 2> /home/ubuntu/.setup_err.log > /home/ubuntu/.setup_out.log" ]
+- [ su, ubuntu, -c, "/home/ubuntu/StanfordQuadruped/%s %s 2> /home/ubuntu/.setup_err.log > /home/ubuntu/.setup_out.log" ]
 - [ reboot ]
 """
 
 with open(user_data_file, 'w') as fh:
     fh.write(user_data % (target_environment['ubuntu_password'],
-                          target_environment['script']))
+                          target_environment['script'],
+                          hardware_version[int(target_environment['hardware_version']) - 1]))

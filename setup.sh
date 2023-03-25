@@ -31,7 +31,8 @@ then
 fi
 
 cd ~
-git clone https://github.com/mangdangroboticsclub/mini_pupper_2_bsp.git  mini_pupper_bsp
+[[ "$1" == "v1" ]] && git clone https://github.com/mangdangroboticsclub/mini_pupper_bsp.git mini_pupper_bsp
+[[ "$1" == "v2" ]] && git clone https://github.com/mangdangroboticsclub/mini_pupper_2_bsp.git mini_pupper_bsp
 [[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.git
 ./mini_pupper_bsp/install.sh
 
