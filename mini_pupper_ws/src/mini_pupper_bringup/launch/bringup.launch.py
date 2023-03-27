@@ -16,6 +16,7 @@ import yaml
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration("use_sim_time")
+    dt = LaunchConfiguration("dt")
 
     declare_use_sim_time = DeclareLaunchArgument(
         name="use_sim_time", default_value="false",
@@ -25,6 +26,10 @@ def generate_launch_description():
         get_package_share_directory('mini_pupper_bringup'), 
         'config'
     )
+
+    dt_arg = DeclareLaunchArgument(
+        name="dt", default_value="0.015",
+        description="Gait parameter dt")
 
     joy_config_filepath = os.path.join(
         config_filepath,
@@ -40,11 +45,13 @@ def generate_launch_description():
     return launch.LaunchDescription(
         [
             declare_use_sim_time,
+            dt_arg,
 
 			Node(
 				package='mini_pupper_controller',
 				executable='mini_pupper_controller',
 				name='mini_pupper_controller_node',
+                parameters=[{'dt': dt}]
 			),  
 					
 			Node(
