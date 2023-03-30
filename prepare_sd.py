@@ -5,9 +5,9 @@ import os
 
 ##############################################################
 #
-# Ask questions to prepare cloud-init file for horo
+# Ask questions to prepare cloud-init file for mini pupper with Stanford controller and ROS2
 #
-# if ~/.hora_sd.txt exists no questions will be asked
+# if ~/.mp_ros2_sd.txt exists no questions will be asked
 #
 ##############################################################
 
@@ -32,7 +32,7 @@ def ask_questions():
     if not 'wifi_password' in target_environment.keys():
         ask_user("Your WiFi password", 'wifi_password')
     if not 'ubuntu_password' in target_environment.keys():
-        ask_user("Horo user password", 'ubuntu_password')
+        ask_user("Mini pupper user password", 'ubuntu_password')
     if not 'hardware_version' in target_environment.keys():
         print("Which Mini Pupper Hardware do you want to install:\n")
         for i in range(len(hardware_version)):
@@ -51,7 +51,7 @@ parser.add_argument('-c', '--cache',
                     help='Cache my responses')
 args = parser.parse_args()
 
-conf_file = os.path.join(os.path.expanduser("~"), '.horo_sd.txt')
+conf_file = os.path.join(os.path.expanduser("~"), '.mp_ros2_sd.txt')
 if os.path.exists(conf_file):
     with open(conf_file, 'r') as fh:
         lines = fh.readlines()
