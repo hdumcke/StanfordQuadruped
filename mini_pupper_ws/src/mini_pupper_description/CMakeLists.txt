@@ -4,7 +4,7 @@ project(mini_pupper_description)
 
 find_package(ament_cmake REQUIRED)
 
-install(DIRECTORY launch config rviz urdf meshes
+install(DIRECTORY launch config rviz urdf xacro meshes
   DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
