@@ -1,5 +1,5 @@
 [Unit]
-Description=Robot control service
+Description=IMU service
 
 [Service]
 User=ubuntu

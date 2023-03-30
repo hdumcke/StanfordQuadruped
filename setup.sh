@@ -36,7 +36,30 @@ cd ~
 [[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.git
 ./mini_pupper_bsp/install.sh
 
-cd StanfordQuadruped
+if [[ "$1" == "v2" ]]
+then
+cd ~/StanfordQuadruped/ros2
+sudo ln -s $(realpath .)/imu.service /etc/systemd/system/
+sudo systemctl enable imu
+fi
+
+
+#TODO move this to mini_pupper_2_bsp
+### Enable UART5
+### RXD5 = Pin 13
+grep -q "uart5" /boot/firmware/config.txt || echo "dtoverlay=uart5" | sudo tee -a /boot/firmware/config.txt
+sudo sed -i "s/^dtoverlay=audremap/#dtoverlay=audremap/" /boot/firmware/config.txt
+
+# Install Lidar
+mkdir -p ~/lidar_ws/src
+cd ~/lidar_ws
+git clone https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2.git src/ldlidar
+colcon build
+cd ~/StanfordQuadruped/ros2
+sudo ln -s $(realpath .)/lidar.service /etc/systemd/system/
+sudo systemctl enable lidar
+
+cd ~/StanfordQuadruped
 ./install_ros.sh
 echo "setup.sh finished at $(date)"
 sudo reboot
