@@ -54,6 +54,7 @@ cd ~/StanfordQuadruped
 ./install_ros.sh
 
 # Install Lidar
+source /opt/ros/humble/setup.bash
 mkdir -p ~/lidar_ws/src
 cd ~/lidar_ws
 git clone https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2.git src/ldlidar
