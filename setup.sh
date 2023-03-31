@@ -50,6 +50,9 @@ fi
 grep -q "uart5" /boot/firmware/config.txt || echo "dtoverlay=uart5" | sudo tee -a /boot/firmware/config.txt
 sudo sed -i "s/^dtoverlay=audremap/#dtoverlay=audremap/" /boot/firmware/config.txt
 
+cd ~/StanfordQuadruped
+./install_ros.sh
+
 # Install Lidar
 mkdir -p ~/lidar_ws/src
 cd ~/lidar_ws
@@ -58,8 +61,5 @@ colcon build
 cd ~/StanfordQuadruped/ros2
 sudo ln -s $(realpath .)/lidar.service /etc/systemd/system/
 sudo systemctl enable lidar
-
-cd ~/StanfordQuadruped
-./install_ros.sh
 echo "setup.sh finished at $(date)"
 sudo reboot

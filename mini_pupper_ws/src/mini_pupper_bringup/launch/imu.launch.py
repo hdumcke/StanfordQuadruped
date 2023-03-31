@@ -3,13 +3,8 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    return launch.LaunchDescription(
-        [
-            Node(
-                package='mini_pupper_imu',
-                executable='mini_pupper_imu',
-                name='mini_pupper_imu_node',
+    imu = Node(package='mini_pupper_imu',
+                        executable='mini_pupper_imu',
+                        name='mini_pupper_imu_node',
             )
-
-        ]
-    )  # return LD
+    return launch.LaunchDescription([imu])
