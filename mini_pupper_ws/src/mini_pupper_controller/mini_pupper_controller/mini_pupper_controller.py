@@ -152,6 +152,9 @@ class MiniPupper(Node):
             self.set_params()
         # self.time_now set by cmd_vel subscriber
         if self.get_clock().now().nanoseconds - self.time_now > self.active_timeout * 1e+9:
+            self.v_x = 0.
+            self.v_y = 0.
+            self.a_z = 0.
             self.state.behavior_state = BehaviorState.REST
         else:
             self.state.behavior_state = BehaviorState.TROT
