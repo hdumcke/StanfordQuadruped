@@ -35,7 +35,8 @@ class MiniPupper(Node):
         self.time_last = None
         self.time_now = None
         self.v_x = 0.
-        self.v_z = 0.
+        self.v_y = 0.
+        self.a_z = 0.
         self.active_timeout = 0.5
 
         # Create config
@@ -135,9 +136,8 @@ class MiniPupper(Node):
 
         command = Command()
 
-        x_vel = self.v_x * self.config.max_x_velocity
-        y_vel = self.v_z * -self.config.max_y_velocity
-        command.horizontal_velocity = np.array([x_vel, y_vel])
+        command.horizontal_velocity = np.array([self.v_x, self.v_y])
+        command.yaw_rate =  self.a_z
 
         return command
 
@@ -178,12 +178,11 @@ class MiniPupper(Node):
             return
         self.time_now = self.get_clock().now().nanoseconds
         self.v_x = msg.linear.x
-        self.v_z = msg.angular.z
+        self.v_y = msg.linear.y
+        self.a_z = msg.angular.z
 
     def publish_odometry(self):
         #TODO
-        v_x = 0.0
-        a_z = 0.0
         x = 0.0
         y = 0.0
         z = 0.0
@@ -203,12 +202,12 @@ class MiniPupper(Node):
         msg.pose.pose.orientation.y = quat_y
         msg.pose.pose.orientation.z = quat_z
         msg.pose.pose.orientation.w = quat_w
-        msg.twist.twist.linear.x = v_x
-        msg.twist.twist.linear.y = 0.
+        msg.twist.twist.linear.x = self.v_x
+        msg.twist.twist.linear.y = self.v_y
         msg.twist.twist.linear.z = 0.
         msg.twist.twist.angular.x = 0.
         msg.twist.twist.angular.y = 0.
-        msg.twist.twist.angular.z = a_z
+        msg.twist.twist.angular.z = self.a_z
         self.publisher.publish(msg)
 
         tfs = TransformStamped()
