@@ -208,6 +208,9 @@ class MiniPupper(Node):
         msg.twist.twist.angular.x = 0.
         msg.twist.twist.angular.y = 0.
         msg.twist.twist.angular.z = self.a_z
+        msg.pose.covariance[0] = -1.0
+        odom_msg.twist.covariance[0] = 0.01  # vx variance = 0.01m/s
+        odom_msg.twist.covariance[35] = 0.05  # wz variance = 0.05rad/s ~3deg/s (must be higher thant IMU so EKF uses IMU)
         self.publisher.publish(msg)
 
         tfs = TransformStamped()
