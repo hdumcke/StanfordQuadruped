@@ -8,7 +8,7 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     pkg_share = FindPackageShare('mini_pupper_bringup').find('mini_pupper_bringup')
     rviz_dir = os.path.join(pkg_share, 'rviz')
-    rviz_file = os.path.join(rviz_dir, 'ld06_viewer.rviz')
+    rviz_file = os.path.join(rviz_dir, 'ldlidar.rviz')
     rviz = Node(package='rviz2',
                 executable='rviz2',
                 name='rviz2',
