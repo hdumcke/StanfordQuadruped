@@ -36,14 +36,6 @@ cd ~
 [[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.git
 ./mini_pupper_bsp/install.sh
 
-if [[ "$1" == "v2" ]]
-then
-cd ~/StanfordQuadruped/ros2
-sudo ln -s $(realpath .)/imu.service /etc/systemd/system/
-sudo systemctl enable imu
-fi
-
-
 #TODO move this to mini_pupper_2_bsp
 ### Enable UART5
 ### RXD5 = Pin 13
@@ -62,5 +54,14 @@ colcon build
 cd ~/StanfordQuadruped/ros2
 sudo ln -s $(realpath .)/lidar.service /etc/systemd/system/
 sudo systemctl enable lidar
+
+# Install IMU
+if [[ "$1" == "v2" ]]
+then
+cd ~/StanfordQuadruped/ros2
+sudo ln -s $(realpath .)/imu.service /etc/systemd/system/
+sudo systemctl enable imu
+sudo apt install -y ros-humble-imu-tools
+fi
 echo "setup.sh finished at $(date)"
 sudo reboot

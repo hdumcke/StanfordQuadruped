@@ -14,6 +14,7 @@ import rclpy
 from rclpy.node import Node
 
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Imu
 from rcl_interfaces.msg import ParameterDescriptor
 from nav_msgs.msg import Odometry
 from tf2_ros.transform_broadcaster import TransformBroadcaster
@@ -29,11 +30,17 @@ class MiniPupper(Node):
             'cmd_vel',
             self.listener_callback,
             10)
+        self.subscription = self.create_subscription(
+            Imu,
+            'imu/data',
+            self.imu_callback,
+            10)
         self.subscription  # prevent unused variable warning
         self.publisher = self.create_publisher(Odometry, 'odom', 10)
-        self.broadcaster = TransformBroadcaster(self, 10) #odom frame broadcaste
+        self.broadcaster = TransformBroadcaster(self, 10)  # odom frame broadcaste
         self.time_last = None
         self.time_now = None
+        self.orientation = np.array([1, 0, 0, 0])
         self.v_x = 0.
         self.v_y = 0.
         self.a_z = 0.
@@ -137,13 +144,12 @@ class MiniPupper(Node):
         command = Command()
 
         command.horizontal_velocity = np.array([self.v_x, self.v_y])
-        command.yaw_rate =  self.a_z
+        command.yaw_rate = self.a_z
 
         return command
 
     def read_orientation(self):
-        #TODO
-        return np.array([1, 0, 0, 0])
+        return self.orientation
 
     def timer_callback(self):
         if self.time_now is None:
@@ -185,7 +191,6 @@ class MiniPupper(Node):
         self.a_z = msg.angular.z
 
     def publish_odometry(self):
-        #TODO
         x = 0.0
         y = 0.0
         z = 0.0
@@ -227,6 +232,12 @@ class MiniPupper(Node):
         self.broadcaster.sendTransform(tfs)
         tfs.child_frame_id = 'base_footprint'
         self.broadcaster.sendTransform(tfs)
+
+    def imu_callback(self, msg):
+        self.orientation[0] = msg.orientation.w
+        self.orientation[1] = msg.orientation.x
+        self.orientation[2] = msg.orientation.y
+        self.orientation[3] = msg.orientation.z
 
 
 def main(args=None):

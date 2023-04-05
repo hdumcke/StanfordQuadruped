@@ -15,7 +15,10 @@
 
 <robot name="mini_pupper" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:include filename="$(find mini_pupper_description)/xacro/materials.xacro" />
+  <xacro:include filename="$(find mini_pupper_description)/xacro/body.xacro" />
   <xacro:include filename="$(find mini_pupper_description)/xacro/leg.xacro" />
+  <xacro:include filename="$(find mini_pupper_description)/xacro/accessories.xacro" />
+  <xacro:include filename="$(find mini_pupper_description)/xacro/imu.xacro" />
 
     <!-- 
     ############################################
@@ -23,42 +26,7 @@
     ############################################
     -->
 
-    <!--
-    ********************************************
-    ******              PARTS             ******
-    ********************************************
-    -->
-    <link name="base_link">
-        <!--body-->
-        <visual>
-            <geometry>
-                <mesh filename="package://mini_pupper_description/meshes/base_link.stl" scale="1.0 1.0 1.0"/>
-            </geometry>
-            <origin rpy="0 0 0" xyz="0 0 -0.017"/>
-            <material name="white"/>          
-        </visual>
-        <collision>
-            <geometry>
-                <box size="0.180 0.060 0.045"/>
-            </geometry>
-            <origin rpy="0 0 0" xyz="0.008 0 0.005"/>
-        </collision>
-
-        <!--body-battery-holder-->
-        <visual>
-            <geometry>
-                <box size="0.150 0.036 0.008"/>
-            </geometry>
-            <origin rpy="0 0 0" xyz="0.0 0.0 -0.020"/>
-            <material name="black"/>                          
-        </visual>
-        <collision>
-            <geometry>
-                <box size="0.150 0.036 0.008"/>
-            </geometry>
-            <origin rpy="0 0 0" xyz="0.0 0.0 -0.020"/>
-        </collision>
-    </link>
+    <xacro:body />
         
     <!-- 
     ############################################
@@ -70,7 +38,7 @@
 
     <!-- 
     ############################################
-    ######              LEG Front Left   ######
+    ######              LEG Front Left    ######
     ############################################
     -->
 
@@ -78,7 +46,7 @@
 
     <!-- 
     ############################################
-    ######              LEG Rear Right   ######
+    ######              LEG Rear Right    ######
     ############################################
     -->
 
@@ -86,7 +54,7 @@
 
     <!-- 
     ############################################
-    ######              Leg Rear Left    ######
+    ######              LEG Rear Left     ######
     ############################################
     -->
 
@@ -94,9 +62,17 @@
 
     <!-- 
     ############################################
+    ######               IMU              ######
+    ############################################
+    -->
+
+    <xacro:imu />
+
+    <!-- 
+    ############################################
     ######               Accessories      ######
     ############################################
     -->
 
-    <xacro:include filename="$(find mini_pupper_description)/xacro/accessories.xacro" />
+    <xacro:accessories />
 </robot>    

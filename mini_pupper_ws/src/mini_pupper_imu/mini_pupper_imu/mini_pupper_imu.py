@@ -10,7 +10,7 @@ class IMU(Node):
 
     def __init__(self):
         super().__init__('mini_pupper_imu')
-        self.publisher = self.create_publisher(Imu, 'imu', 10)
+        self.publisher = self.create_publisher(Imu, 'imu/data_raw', 10)
         self.esp32 = ESP32Interface()
         self.gyro_x_offset = 0.0  # [rad/s]
         self.gyro_y_offset = 0.0  # [rad/s]
@@ -24,15 +24,14 @@ class IMU(Node):
 
     def read_imu(self):
         raw = self.esp32.imu_get_data()
-        # TODO fix orientation
-        # TODO fix dimension
         imu_readings = []
-        imu_readings.append(raw['ax'] * 9.81 + self.accel_x_offset)
-        imu_readings.append(raw['ay'] * 9.81 + self.accel_x_offset)
-        imu_readings.append(raw['az'] * 9.81 + self.accel_x_offset)
-        imu_readings.append(raw['gx'] * 0.017453 + self.gyro_x_offset)
-        imu_readings.append(raw['gy'] * 0.017453 + self.gyro_y_offset)
-        imu_readings.append(raw['gz'] * 0.017453 + self.gyro_z_offset)
+        # fix orientation and units
+        imu_readings.append(raw['ay'] * 9.81 - self.accel_y_offset)
+        imu_readings.append(raw['ax'] * 9.81 - self.accel_x_offset)
+        imu_readings.append(raw['az'] * -9.81 - self.accel_z_offset)
+        imu_readings.append(raw['gy'] * 0.017453 - self.gyro_y_offset)
+        imu_readings.append(raw['gx'] * 0.017453 - self.gyro_x_offset)
+        imu_readings.append(raw['gz'] * -0.017453 - self.gyro_z_offset)
         return imu_readings
 
     def calibrate_imu(self):
@@ -55,15 +54,23 @@ class IMU(Node):
         self.accel_x_offset = accel_x_offset / calibration_count
         self.accel_y_offset = accel_y_offset / calibration_count
         self.accel_z_offset = accel_z_offset / calibration_count
+        self.accel_z_offset -= 9.81
         self.gyro_x_offset = gyro_x_offset / calibration_count
         self.gyro_y_offset = gyro_y_offset / calibration_count
         self.gyro_z_offset = gyro_z_offset / calibration_count
+
+        self.get_logger().info("accel_x_offset: %s" % self.accel_x_offset)
+        self.get_logger().info("accel_y_offset: %s" % self.accel_y_offset)
+        self.get_logger().info("accel_z_offset: %s" % self.accel_z_offset)
+        self.get_logger().info("gyro_x_offset:%s" % self.gyro_x_offset)
+        self.get_logger().info("gyro_y_offset:%s" % self.gyro_y_offset)
+        self.get_logger().info("gyro_z_offset:%s" % self.gyro_z_offset)
 
     def publish_imu(self):
         ax, ay, az, gx, gy, gz = self.read_imu()
         msg = Imu()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = "base_link"
+        msg.header.frame_id = "imu"
         msg.linear_acceleration_covariance[0] = 0.005 * 9.81
         msg.linear_acceleration_covariance[4] = 0.005 * 9.81
         msg.linear_acceleration_covariance[8] = 0.005 * 9.81
@@ -82,7 +89,7 @@ class IMU(Node):
         msg.orientation.x = 0.0
         msg.orientation.y = 0.0
         msg.orientation.z = 0.0
-        msg.orientation.w = 0.0
+        msg.orientation.w = 1.0
         self.publisher.publish(msg)
 
 
