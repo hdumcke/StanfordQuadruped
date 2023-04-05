@@ -12,6 +12,7 @@
     <xacro:property name="lidar_offset_x" value="-0.01"/>
     <xacro:property name="lidar_offset_z" value="0.06"/>
     <xacro:property name="has_oakd" value="False"/>
+    <xacro:property name="angle_45" value="0.785398"/>
     <xacro:property name="right_angle" value="1.57079"/>
     <xacro:property name="angle_135" value="2.35619"/>
     <xacro:property name="angle_180" value="3.14159"/>

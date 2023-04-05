@@ -26,11 +26,11 @@ class IMU(Node):
         raw = self.esp32.imu_get_data()
         imu_readings = []
         # fix orientation and units
-        imu_readings.append(raw['ay'] * 9.81 - self.accel_y_offset)
-        imu_readings.append(raw['ax'] * 9.81 - self.accel_x_offset)
+        imu_readings.append(raw['ay'] * 9.81 - self.accel_x_offset)
+        imu_readings.append(raw['ax'] * 9.81 - self.accel_y_offset)
         imu_readings.append(raw['az'] * -9.81 - self.accel_z_offset)
-        imu_readings.append(raw['gy'] * 0.017453 - self.gyro_y_offset)
-        imu_readings.append(raw['gx'] * 0.017453 - self.gyro_x_offset)
+        imu_readings.append(raw['gy'] * 0.017453 - self.gyro_x_offset)
+        imu_readings.append(raw['gx'] * 0.017453 - self.gyro_y_offset)
         imu_readings.append(raw['gz'] * -0.017453 - self.gyro_z_offset)
         return imu_readings
 

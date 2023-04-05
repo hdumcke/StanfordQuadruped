@@ -91,7 +91,7 @@
             <child link="${name}-femur"/>
 	    <origin rpy="-${right_angle} -${angle_135} 0.0" xyz="0.0 ${side_sign}${hip_offset_y} 0.0"/>
             <axis xyz="0 0 1"/>
-            <limit lower="0.0" upper="3.4" effort="100" velocity="1000"/>
+            <limit lower="-${angle_45}" upper="${angle_45}" effort="100" velocity="1000"/>      
         </joint>
         
         <joint name="${name}-knee" type="revolute">
@@ -99,7 +99,7 @@
             <child link="${name}-tibia"/>
 	    <origin rpy="0.0 0.0 -${right_angle}" xyz="${knee_offset_x} 0.0 ${side_sign}${knee_offset_z}"/>
             <axis xyz="0 0 1"/>
-            <limit lower="-2.8" upper="0.0" effort="100" velocity="1000"/>
+            <limit lower="-${angle_45}" upper="${angle_45}" effort="100" velocity="1000"/>      
         </joint>
         
         <joint name="${name}-foot" type="fixed">
