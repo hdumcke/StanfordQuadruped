@@ -76,6 +76,9 @@ cd ~/StanfordQuadruped/ros2
 sudo ln -s $(realpath .)/v4l2_camera.service /etc/systemd/system/
 sudo systemctl enable v4l2_camera
 sudo apt install -y ros-humble-v4l2-camera ros-humble-image-transport-plugins
+mkdir -p ~/.ros/camera_info/
+# copy defaultcamera calibration file. This should be replaced by a camera spefici calibration file
+cp $BASEDIR/ros2/mmal_service_16.1.yaml ~/.ros/camera_info/
 
 echo "setup.sh finished at $(date)"
 sudo reboot
