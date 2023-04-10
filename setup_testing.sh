@@ -39,3 +39,5 @@ sudo PBR_VERSION=$(cd ~/mini_pupper_bsp; ./get-version.sh) pip install ~/mini_pu
 
 cd StanfordQuadruped
 ./install_ros.sh
+
+sudo apt-get -y install ros-humble-joint-state-publisher-gui

@@ -63,5 +63,19 @@ sudo ln -s $(realpath .)/imu.service /etc/systemd/system/
 sudo systemctl enable imu
 sudo apt install -y ros-humble-imu-tools
 fi
+
+# Install Camera
+#TODO remove when PR to mini_pupper*_bsp is merged 
+echo "start_x=1" | sudo tee -a /boot/firmware/config.txt
+echo "gpu_mem=128" | sudo tee -a /boot/firmware/config.txt
+echo "dtoverlay=vc4-fkms-v3d" | sudo tee -a /boot/firmware/config.txt
+sudo sed -i 's/^camera_auto_detect=1/#camera_auto_detect=1/g' /boot/firmware/config.txt
+sudo wget https://datasheets.raspberrypi.org/cmio/dt-blob-cam1.bin -O /boot/firmware/dt-blob.bin
+#TODO end of remove
+cd ~/StanfordQuadruped/ros2
+sudo ln -s $(realpath .)/v4l2_camera.service /etc/systemd/system/
+sudo systemctl enable v4l2_camera
+sudo apt install -y ros-humble-v4l2-camera ros-humble-image-transport-plugins
+
 echo "setup.sh finished at $(date)"
 sudo reboot

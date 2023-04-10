@@ -17,8 +17,9 @@
   <xacro:include filename="$(find mini_pupper_description)/xacro/materials.xacro" />
   <xacro:include filename="$(find mini_pupper_description)/xacro/body.xacro" />
   <xacro:include filename="$(find mini_pupper_description)/xacro/leg.xacro" />
-  <xacro:include filename="$(find mini_pupper_description)/xacro/accessories.xacro" />
+  <xacro:include filename="$(find mini_pupper_description)/xacro/lidar.xacro" />
   <xacro:include filename="$(find mini_pupper_description)/xacro/imu.xacro" />
+  <xacro:include filename="$(find mini_pupper_description)/xacro/camera.xacro" />
 
     <!-- 
     ############################################
@@ -70,9 +71,17 @@
 
     <!-- 
     ############################################
-    ######               Accessories      ######
+    ######               Lidar LD06       ######
     ############################################
     -->
 
-    <xacro:accessories />
+    <xacro:lidar />
+
+    <!-- 
+    ############################################
+    ######               RPi camera       ######
+    ############################################
+    -->
+
+    <xacro:camera />
 </robot>    

@@ -9,6 +9,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:property name="has_lidar" value="True"/>
     <xacro:property name="has_imu" value="True"/>
+    <xacro:property name="has_camera" value="True"/>
     <xacro:property name="lidar_offset_x" value="-0.01"/>
     <xacro:property name="lidar_offset_z" value="0.06"/>
     <xacro:property name="has_oakd" value="False"/>
