@@ -20,6 +20,13 @@ echo "setup.sh started at $(date)"
 ### Get directory where this script is installed
 BASEDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+sudo apt install -y python-is-python3
+
+### Install pip
+cd /tmp
+wget --no-check-certificate https://bootstrap.pypa.io/get-pip.py
+sudo python get-pip.py
+
 ### Install ROS2
 cd ~
 git clone https://github.com/Tiryoh/ros2_setup_scripts_ubuntu.git
