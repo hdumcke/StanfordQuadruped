@@ -37,3 +37,9 @@ cd ~/StanfordQuadruped/mini_pupper_ws
 rosdep update && rosdep install --from-path src --ignore-src -y --skip-keys microxrcedds_agent --skip-keys micro_ros_agent
 sudo pip install setuptools==58.2.0 # suppress colcon build warning
 colcon build --symlink-install
+
+# Cyclon DDS
+sudo apt install -y ros-humble-rmw-cyclonedds-cpp
+echo 'export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp' >> ~/.bashrc
+
+echo 'export ROS_DOMAIN_ID=0' >> ~/.bashrc
