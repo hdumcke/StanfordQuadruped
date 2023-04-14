@@ -60,7 +60,7 @@ class MiniPupper(Node):
             four_legs_inverse_kinematics,
         )
         self.state = State()
-        self.state.behavior_state = BehaviorState.REST
+        self.activate = True
 
         self.get_logger().info("Summary of gait parameters:")
         self.get_logger().info("dt: %s" % self.config.dt)
@@ -164,6 +164,10 @@ class MiniPupper(Node):
             self.state.behavior_state = BehaviorState.REST
         else:
             self.state.behavior_state = BehaviorState.TROT
+
+        if self.activate:
+            self.activate = False
+            self.state.behavior_state = BehaviorState.REST
 
         command = self.get_command()
 
