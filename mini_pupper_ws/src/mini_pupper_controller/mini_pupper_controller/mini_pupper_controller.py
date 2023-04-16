@@ -40,7 +40,7 @@ class MiniPupper(Node):
         self.broadcaster = TransformBroadcaster(self, 10)  # odom frame broadcaste
         self.time_last = None
         self.time_now = None
-        self.orientation = np.array([1, 0, 0, 0])
+        self.orientation = np.array([1.0, 0.0, 0.0, 0.0])
         self.v_x = 0.
         self.v_y = 0.
         self.a_z = 0.
