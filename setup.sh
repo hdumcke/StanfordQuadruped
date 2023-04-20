@@ -36,47 +36,23 @@ cd ~
 #TODO remove after testing
 [[ "$1" == "v2" ]] && git clone -b add_calibration_tools https://github.com/hdumcke/mini_pupper_2_bsp.git mini_pupper_bsp
 sed -i "s/PBR_VERSION/DUMMY/" ~/mini_pupper_bsp/install.sh
+[[ -d ~/mini_pupper_ros_bsp ]] || git clone -b for_review https://github.com/hdumcke/mini_pupper_ros_bsp.git /home/ubuntu/mini_pupper_ros_bsp
 ##########################
-[[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.git
-./mini_pupper_bsp/install.sh
+[[ -d ~/mini_pupper_ros_bsp ]] || git clone https://github.com//mangdangroboticsclub/mini_pupper_ros_bsp.git
+[[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.gir /home/ubuntu/mini_pupper_ros_bsp
 
-#TODO move this to mini_pupper_2_bsp
+cd ~/mini_pupper_ros_bsp
+sed -i "/reboot/d" setup.sh
+./setup.sh $1
+
+cd ~/StanfordQuadruped
+-./install_ros.sh
+
+#TODO remove ater PR is merged
 ### Enable UART5
 ### RXD5 = Pin 13
 grep -q "uart5" /boot/firmware/config.txt || echo "dtoverlay=uart5" | sudo tee -a /boot/firmware/config.txt
 sudo sed -i "s/^dtoverlay=audremap/#dtoverlay=audremap/" /boot/firmware/config.txt
-
-cd ~/StanfordQuadruped
-./install_ros.sh
-
-# Install Lidar
-source /opt/ros/humble/setup.bash
-mkdir -p ~/lidar_ws/src
-cd ~/lidar_ws
-git clone https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2.git src/ldlidar
-colcon build
-cd ~/StanfordQuadruped/ros2
-sudo ln -s $(realpath .)/lidar.service /etc/systemd/system/
-sudo systemctl enable lidar
-
-# Install IMU
-if [[ "$1" == "v2" ]]
-then
-cd ~/StanfordQuadruped/ros2
-sudo ln -s $(realpath .)/imu.service /etc/systemd/system/
-sudo systemctl enable imu
-sudo apt install -y ros-humble-imu-tools
-fi
-
-# Install Camera
-~/mini_pupper_bsp/RPiCamera/install.sh
-cd ~/StanfordQuadruped/ros2
-sudo ln -s $(realpath .)/v4l2_camera.service /etc/systemd/system/
-sudo systemctl enable v4l2_camera
-sudo apt install -y ros-humble-v4l2-camera ros-humble-image-transport-plugins
-mkdir -p ~/.ros/camera_info/
-# copy defaultcamera calibration file. This should be replaced by a camera spefici calibration file
-cp $BASEDIR/ros2/mmal_service_16.1.yaml ~/.ros/camera_info/
 
 echo "setup.sh finished at $(date)"
 sudo reboot

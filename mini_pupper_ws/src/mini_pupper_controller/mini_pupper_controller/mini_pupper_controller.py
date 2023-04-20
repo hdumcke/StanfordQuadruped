@@ -241,8 +241,6 @@ class MiniPupper(Node):
         tfs.transform.translation.z = msg.pose.pose.position.z
         tfs.transform.rotation = msg.pose.pose.orientation
         self.broadcaster.sendTransform(tfs)
-        tfs.child_frame_id = 'base_footprint'
-        self.broadcaster.sendTransform(tfs)
 
     def imu_callback(self, msg):
         self.orientation[0] = msg.orientation.w
