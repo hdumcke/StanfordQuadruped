@@ -20,6 +20,8 @@ from nav_msgs.msg import Odometry
 from tf2_ros.transform_broadcaster import TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 
+from transforms3d.euler import quat2euler
+
 
 class MiniPupper(Node):
 
@@ -36,7 +38,7 @@ class MiniPupper(Node):
             self.imu_callback,
             10)
         self.subscription  # prevent unused variable warning
-        self.publisher = self.create_publisher(Odometry, 'odom', 10)
+        self.publisher = self.create_publisher(Odometry, 'odom_legs', 10)
         self.broadcaster = TransformBroadcaster(self, 10)  # odom frame broadcaste
         self.time_last = None
         self.time_now = None
@@ -176,6 +178,11 @@ class MiniPupper(Node):
             self.read_orientation()
         )
         self.state.quat_orientation = quat_orientation
+
+        if self.state.behavior_state == BehaviorState.REST:
+            (roll, pitch, yaw) = quat2euler(quat_orientation)
+            command.roll = roll
+            command.pitch = pitch
 
         # Step the controller forward by dt
         self.controller.run(self.state, command, self.disp)
