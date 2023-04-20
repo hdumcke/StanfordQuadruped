@@ -29,11 +29,6 @@ def generate_launch_description():
         "joy.config.yaml"
     )
 
-    teleop_config_filepath = os.path.join(
-        config_filepath,
-        "teleop.config.yaml"
-    )
-
     return launch.LaunchDescription(
         [
             declare_use_sim_time,
@@ -51,13 +46,6 @@ def generate_launch_description():
                 executable='joy_node',
                 name='joy_node',
                 parameters=[joy_config_filepath]
-            ),
-
-            Node(
-                package='teleop_twist_joy',
-                executable='teleop_node',
-                name='teleop_twist_joy_node',
-                parameters=[teleop_config_filepath]
             ),
 
         ]
