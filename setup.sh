@@ -39,7 +39,7 @@ sed -i "s/PBR_VERSION/DUMMY/" ~/mini_pupper_bsp/install.sh
 [[ -d ~/mini_pupper_ros_bsp ]] || git clone -b for_review https://github.com/hdumcke/mini_pupper_ros_bsp.git /home/ubuntu/mini_pupper_ros_bsp
 ##########################
 [[ -d ~/mini_pupper_ros_bsp ]] || git clone https://github.com//mangdangroboticsclub/mini_pupper_ros_bsp.git
-[[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.gir /home/ubuntu/mini_pupper_ros_bsp
+[[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.git /home/ubuntu/StanfordQuadruped
 
 cd ~/mini_pupper_ros_bsp
 sed -i "/reboot/d" setup.sh
