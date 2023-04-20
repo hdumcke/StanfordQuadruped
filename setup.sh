@@ -46,7 +46,7 @@ sed -i "/reboot/d" setup.sh
 ./setup.sh $1
 
 cd ~/StanfordQuadruped
--./install_ros.sh
+./install_ros.sh
 
 #TODO remove ater PR is merged
 ### Enable UART5
