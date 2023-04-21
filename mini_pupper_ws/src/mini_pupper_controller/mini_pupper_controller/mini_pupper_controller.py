@@ -1,20 +1,24 @@
 import numpy as np
 import sys
 import os
+from copy import deepcopy
 sys.path.append(os.path.join(os.path.expanduser('~'), 'StanfordQuadruped'))
 from src.Controller import Controller
 from src.Command import Command
 from src.State import BehaviorState, State
+from src.Utilities import deadband, clipped_first_order_filter
 from MangDang.mini_pupper.HardwareInterface import HardwareInterface
 from MangDang.mini_pupper.Config import Configuration
 from pupper.Kinematics import four_legs_inverse_kinematics
 from MangDang.mini_pupper.display import Display
+from MangDang.mini_pupper.shutdown import ShutDown
 
 import rclpy
 from rclpy.node import Node
 
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
+from sensor_msgs.msg import Joy
 from rcl_interfaces.msg import ParameterDescriptor
 from nav_msgs.msg import Odometry
 from tf2_ros.transform_broadcaster import TransformBroadcaster
@@ -36,6 +40,11 @@ class MiniPupper(Node):
             Imu,
             'imu/data',
             self.imu_callback,
+            10)
+        self.subscription = self.create_subscription(
+            Joy,
+            'joy',
+            self.joy_callback,
             10)
         self.subscription  # prevent unused variable warning
         self.publisher = self.create_publisher(Odometry, 'odom_legs', 10)
@@ -62,7 +71,14 @@ class MiniPupper(Node):
             four_legs_inverse_kinematics,
         )
         self.state = State()
-        self.activate = True
+        self.joy_command = Command()
+        self.activated = False
+        self.previous_gait_toggle = 0
+        self.previous_state = BehaviorState.REST
+        self.previous_hop_toggle = 0
+        self.previous_activate_toggle = 0
+        self.sutdown_time = ShutDown()
+        self.message_dt = 0.001 # publishing freqyency of /joy topic
 
         self.get_logger().info("Summary of gait parameters:")
         self.get_logger().info("dt: %s" % self.config.dt)
@@ -141,37 +157,39 @@ class MiniPupper(Node):
         self.config.overlap_time = self.get_parameter('overlap_time').get_parameter_value().double_value
         self.config.swing_time = self.get_parameter('swing_time').get_parameter_value().double_value
 
-    def get_command(self):
-
-        command = Command()
-
+    def get_command_from_cmd_vel(self):
         command.horizontal_velocity = np.array([self.v_x, self.v_y])
         command.yaw_rate = self.a_z
-
         return command
+
+    def get_command_from_joy(self):
+        return self.joy_command
+
+    def get_command(self):
+
+        return self.get_command_from_joy()
 
     def read_orientation(self):
         return self.orientation
 
     def timer_callback(self):
+        if not self.activated:
+            return
         if self.time_now is None:
             return
         if self.state.behavior_state == BehaviorState.REST:
             self.set_params()
         # self.time_now set by cmd_vel subscriber
-        if self.get_clock().now().nanoseconds - self.time_now > self.active_timeout * 1e+9:
-            self.v_x = 0.
-            self.v_y = 0.
-            self.a_z = 0.
-            self.state.behavior_state = BehaviorState.REST
-        else:
-            self.state.behavior_state = BehaviorState.TROT
-
-        if self.activate:
-            self.activate = False
-            self.state.behavior_state = BehaviorState.REST
+        #if self.get_clock().now().nanoseconds - self.time_now > self.active_timeout * 1e+9:
+        #    self.v_x = 0.
+        #    self.v_y = 0.
+        #    self.a_z = 0.
+        #    self.activated = False
+        #else:
+        #    self.state.behavior_state = BehaviorState.TROT
 
         command = self.get_command()
+        self.get_logger().info("%s %s" % (command.yaw_rate, command.pitch))
 
         # Read imu data. Orientation will be None if no data was available
         quat_orientation = (
@@ -179,10 +197,10 @@ class MiniPupper(Node):
         )
         self.state.quat_orientation = quat_orientation
 
-        if self.state.behavior_state == BehaviorState.REST:
-            (roll, pitch, yaw) = quat2euler(quat_orientation)
-            command.roll = roll
-            command.pitch = pitch
+        #if self.state.behavior_state == BehaviorState.REST:
+        #    (roll, pitch, yaw) = quat2euler(quat_orientation)
+        #    command.roll = roll
+        #    command.pitch = pitch
 
         # Step the controller forward by dt
         self.controller.run(self.state, command, self.disp)
@@ -247,6 +265,67 @@ class MiniPupper(Node):
         self.orientation[1] = msg.orientation.x
         self.orientation[2] = msg.orientation.y
         self.orientation[3] = msg.orientation.z
+
+    def joy_callback(self, msg):
+        command = Command()
+        ####### Handle discrete commands ########
+
+        # Check for shotdown requests
+        if msg.buttons[3]:
+            self.disp.show_state(BehaviorState.SHUTDOWN)
+            self.sutdown_time.request_shutdown()
+        else:
+            self.sutdown_time.cancel_shutdown()
+
+        # Check if requesting a state transition to trotting, or from trotting to resting
+        gait_toggle = msg.buttons[5]
+        command.trot_event = (gait_toggle == 1 and self.previous_gait_toggle == 0)
+
+        # Check if requesting a state transition to hopping, from trotting or resting
+        hop_toggle = msg.buttons[1]
+        command.hop_event = (hop_toggle == 1 and self.previous_hop_toggle == 0)
+
+        activate_toggle = msg.buttons[4]
+        command.activate_event = (activate_toggle == 1 and self.previous_activate_toggle == 0)
+
+        # Update previous values for toggles and state
+        self.previous_gait_toggle = gait_toggle
+        self.previous_hop_toggle = hop_toggle
+        self.previous_activate_toggle = activate_toggle
+
+        ####### Handle continuous commands ########
+        x_vel = msg.axes[1] * self.config.max_x_velocity
+        y_vel = msg.axes[0] * -self.config.max_y_velocity
+        command.horizontal_velocity = np.array([x_vel, y_vel])
+        command.yaw_rate = msg.axes[2] * -self.config.max_yaw_rate
+
+        pitch = msg.axes[5] * self.config.max_pitch
+        deadbanded_pitch = deadband(
+            pitch, self.config.pitch_deadband
+        )
+        pitch_rate = clipped_first_order_filter(
+            self.state.pitch,
+            deadbanded_pitch,
+            self.config.max_pitch_rate,
+            self.config.pitch_time_constant,
+        )
+        command.pitch = self.state.pitch + self.message_dt * pitch_rate
+
+        height_movement = msg.axes[13]
+        command.height = self.state.height - self.message_dt * self.config.z_speed * height_movement
+
+        roll_movement = - msg.axes[12]
+        command.roll = self.state.roll + self.message_dt * self.config.roll_speed * roll_movement
+
+        # Hande activation state
+        if command.activate_event:
+            self.activated = not self.activated
+            if not self.activated:
+                self.disp.show_state(BehaviorState.DEACTIVATED)
+
+        if self.activated:
+            self.time_now = self.get_clock().now().nanoseconds
+        self.joy_command = deepcopy(command)
 
 
 def main(args=None):

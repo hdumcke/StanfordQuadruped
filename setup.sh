@@ -35,6 +35,7 @@ cd ~
 #[[ "$1" == "v2" ]] && git clone https://github.com/mangdangroboticsclub/mini_pupper_2_bsp.git mini_pupper_bsp
 #TODO remove after testing
 [[ "$1" == "v2" ]] && git clone -b add_calibration_tools https://github.com/hdumcke/mini_pupper_2_bsp.git mini_pupper_bsp
+[[ "$1" == "v2" ]] && sed -i "s/ttyAMA1/ttyAMA2/" mini_pupper_bsp/esp32_proxy/esp32-proxy.cpp
 sed -i "s/PBR_VERSION/DUMMY/" ~/mini_pupper_bsp/install.sh
 [[ -d ~/mini_pupper_ros_bsp ]] || git clone -b for_review https://github.com/hdumcke/mini_pupper_ros_bsp.git /home/ubuntu/mini_pupper_ros_bsp
 ##########################
@@ -47,6 +48,10 @@ sed -i "/reboot/d" setup.sh
 
 cd ~/StanfordQuadruped
 ./install_ros.sh
+
+# disable unused services
+sudo systemctl disable servo_interface
+sudo systemctl disable display_interface
 
 #TODO remove ater PR is merged
 ### Enable UART5
