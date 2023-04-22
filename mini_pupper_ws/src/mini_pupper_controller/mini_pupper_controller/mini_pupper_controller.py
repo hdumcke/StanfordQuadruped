@@ -79,7 +79,7 @@ class MiniPupper(Node):
         self.previous_hop_toggle = 0
         self.previous_activate_toggle = 0
         self.sutdown_time = ShutDown()
-        self.message_dt = 0.001 # publishing freqyency of /joy topic
+        self.message_dt = 0.05 # joy_node autorepeat_rate, default 20 Hz
 
         self.get_logger().info("Summary of gait parameters:")
         self.get_logger().info("dt: %s" % self.config.dt)
@@ -308,7 +308,7 @@ class MiniPupper(Node):
         x_vel = msg.axes[1] * self.config.max_x_velocity
         y_vel = msg.axes[0] * -self.config.max_y_velocity
         command.horizontal_velocity = np.array([x_vel, y_vel])
-        command.yaw_rate = msg.axes[2] * -self.config.max_yaw_rate
+        command.yaw_rate = msg.axes[2] * self.config.max_yaw_rate
 
         pitch = msg.axes[5] * self.config.max_pitch
         deadbanded_pitch = deadband(
