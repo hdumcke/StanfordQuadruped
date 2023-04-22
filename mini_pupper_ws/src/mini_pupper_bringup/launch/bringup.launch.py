@@ -24,11 +24,6 @@ def generate_launch_description():
         name="dt", default_value="0.015",
         description="Gait parameter dt")
 
-    joy_config_filepath = os.path.join(
-        config_filepath,
-        "joy.config.yaml"
-    )
-
     return launch.LaunchDescription(
         [
             declare_use_sim_time,
@@ -39,13 +34,6 @@ def generate_launch_description():
                 executable='mini_pupper_controller',
                 name='mini_pupper_controller_node',
                 parameters=[{'dt': dt}]
-            ),
-
-            Node(
-                package='joy',
-                executable='joy_node',
-                name='joy_node',
-                parameters=[joy_config_filepath]
             ),
 
         ]
