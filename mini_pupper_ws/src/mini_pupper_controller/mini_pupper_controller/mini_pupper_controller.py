@@ -184,14 +184,14 @@ class MiniPupper(Node):
             return
         if self.state.behavior_state == BehaviorState.REST:
             self.set_params()
-        # self.time_now set by cmd_vel subscriber
-        #if self.get_clock().now().nanoseconds - self.time_now > self.active_timeout * 1e+9:
-        #    self.v_x = 0.
-        #    self.v_y = 0.
-        #    self.a_z = 0.
-        #    self.activated = False
-        #else:
-        #    self.state.behavior_state = BehaviorState.TROT
+        # Deactivate if no messages are received
+        if self.get_clock().now().nanoseconds - self.time_now > self.active_timeout * 1e+9:
+            self.v_x = 0.
+            self.v_y = 0.
+            self.a_z = 0.
+            self.activated = False
+            self.disp.show_state(BehaviorState.DEACTIVATED)
+            self.state.behavior_state == BehaviorState.REST
 
         command = self.get_command()
 
@@ -213,6 +213,11 @@ class MiniPupper(Node):
         self.hardware_interface.set_actuator_postions(self.state.joint_angles)
 
         self.publish_odometry()
+
+        # activate TROT for cmd_vel
+        if self.activated_by == 'cmd_vel' and self.previous_state == BehaviorState.REST:
+            self.state.behavior_state == BehaviorState.TROT
+
 
     def listener_callback(self, msg):
         if self.time_last is None:
