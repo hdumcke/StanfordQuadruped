@@ -73,6 +73,7 @@ class MiniPupper(Node):
         self.state = State()
         self.joy_command = Command()
         self.activated = False
+        self.activated_by = None
         self.previous_gait_toggle = 0
         self.previous_state = BehaviorState.REST
         self.previous_hop_toggle = 0
@@ -158,6 +159,7 @@ class MiniPupper(Node):
         self.config.swing_time = self.get_parameter('swing_time').get_parameter_value().double_value
 
     def get_command_from_cmd_vel(self):
+        command = Command()
         command.horizontal_velocity = np.array([self.v_x, self.v_y])
         command.yaw_rate = self.a_z
         return command
@@ -167,7 +169,10 @@ class MiniPupper(Node):
 
     def get_command(self):
 
-        return self.get_command_from_joy()
+        if self.activated_by == 'cmd_vel':
+            return self.get_command_from_cmd_vel()
+        else:
+            return self.get_command_from_joy()
 
     def read_orientation(self):
         return self.orientation
@@ -189,7 +194,6 @@ class MiniPupper(Node):
         #    self.state.behavior_state = BehaviorState.TROT
 
         command = self.get_command()
-        self.get_logger().info("%s %s" % (command.yaw_rate, command.pitch))
 
         # Read imu data. Orientation will be None if no data was available
         quat_orientation = (
@@ -214,6 +218,8 @@ class MiniPupper(Node):
         if self.time_last is None:
             self.time_last = self.get_clock().now().nanoseconds
             return
+        self.activated_by = 'cmd_vel'
+        self.activated = True
         self.time_now = self.get_clock().now().nanoseconds
         self.v_x = msg.linear.x
         self.v_y = msg.linear.y
@@ -267,6 +273,7 @@ class MiniPupper(Node):
         self.orientation[3] = msg.orientation.z
 
     def joy_callback(self, msg):
+        self.activated_by = 'joy'
         command = Command()
         ####### Handle discrete commands ########
 
