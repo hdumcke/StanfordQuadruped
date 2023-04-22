@@ -278,7 +278,6 @@ class MiniPupper(Node):
         self.orientation[3] = msg.orientation.z
 
     def joy_callback(self, msg):
-        self.activated_by = 'joy'
         command = Command()
         ####### Handle discrete commands ########
 
@@ -334,8 +333,12 @@ class MiniPupper(Node):
             self.activated = not self.activated
             if not self.activated:
                 self.disp.show_state(BehaviorState.DEACTIVATED)
+            else:
+                # done with event
+                command.activate_event = 0
 
         if self.activated:
+            self.activated_by = 'joy'
             self.time_now = self.get_clock().now().nanoseconds
         self.joy_command = deepcopy(command)
 
