@@ -1,18 +1,4 @@
 #!/bin/bash
-######################################################################################
-# Stanford
-#
-# This stack will consist of board support package (mini_pupper_bsp),
-#    the StanfordQuadruped controller and the mini_pupper_web_controller
-#
-# After installation you can either pair a supported PS4 joystick or
-# point your web browser to 
-#   http://x.x.x.x:8080
-# where x.x.x.x is the IP address of your Mini Pupper as displayed on the LCD screen
-#
-# To install
-#    ./setup.sh <SSID> "<your Wifi password>"
-######################################################################################
 
 set -e
 echo "setup.sh started at $(date)"
@@ -33,11 +19,6 @@ fi
 cd ~
 [[ "$1" == "v1" ]] && git clone https://github.com/mangdangroboticsclub/mini_pupper_bsp.git mini_pupper_bsp
 #[[ "$1" == "v2" ]] && git clone https://github.com/mangdangroboticsclub/mini_pupper_2_bsp.git mini_pupper_bsp
-#TODO remove after testing
-[[ "$1" == "v2" ]] && git clone -b add_calibration_tools https://github.com/hdumcke/mini_pupper_2_bsp.git mini_pupper_bsp
-[[ "$1" == "v2" ]] && sed -i "s/ttyAMA1/ttyAMA2/" mini_pupper_bsp/esp32_proxy/esp32-proxy.cpp
-sed -i "s/PBR_VERSION/DUMMY/" ~/mini_pupper_bsp/install.sh
-[[ -d ~/mini_pupper_ros_bsp ]] || git clone -b for_review https://github.com/hdumcke/mini_pupper_ros_bsp.git /home/ubuntu/mini_pupper_ros_bsp
 ##########################
 [[ -d ~/mini_pupper_ros_bsp ]] || git clone https://github.com//mangdangroboticsclub/mini_pupper_ros_bsp.git
 [[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.git /home/ubuntu/StanfordQuadruped
@@ -53,7 +34,7 @@ cd ~/StanfordQuadruped
 sudo systemctl disable servo_interface
 sudo systemctl disable display_interface
 
-#TODO remove ater PR is merged
+#TODO remove after PR that enables uart2is merged
 ### Enable UART5
 ### RXD5 = Pin 13
 grep -q "uart5" /boot/firmware/config.txt || echo "dtoverlay=uart5" | sudo tee -a /boot/firmware/config.txt
