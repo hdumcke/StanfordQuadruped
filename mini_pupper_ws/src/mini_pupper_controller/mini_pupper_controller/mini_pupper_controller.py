@@ -73,6 +73,7 @@ class MiniPupper(Node):
         self.state = State()
         self.joy_command = Command()
         self.activated = False
+        self.activated_joy = False
         self.activated_by = None
         self.previous_gait_toggle = 0
         self.previous_state = BehaviorState.REST
@@ -191,7 +192,8 @@ class MiniPupper(Node):
             self.a_z = 0.
             self.activated = False
             self.disp.show_state(BehaviorState.DEACTIVATED)
-            self.state.behavior_state == BehaviorState.REST
+            self.state.behavior_state = BehaviorState.REST
+            self.previous_state = BehaviorState.REST
 
         command = self.get_command()
 
@@ -210,13 +212,15 @@ class MiniPupper(Node):
         self.controller.run(self.state, command, self.disp)
 
         # Update the pwm widths going to the servos
+        self.get_logger().info("%.2f %.2f %.2f %.2f" % (command.height, command.yaw_rate, command.pitch, command.roll))
+        #self.get_logger().info("joint_angles: %s" % (self.state.joint_angles * 57.2958))
         self.hardware_interface.set_actuator_postions(self.state.joint_angles)
 
         self.publish_odometry()
 
         # activate TROT for cmd_vel
         if self.activated_by == 'cmd_vel' and self.previous_state == BehaviorState.REST:
-            self.state.behavior_state == BehaviorState.TROT
+            self.state.behavior_state = BehaviorState.TROT
 
 
     def listener_callback(self, msg):
@@ -281,7 +285,7 @@ class MiniPupper(Node):
         command = Command()
         ####### Handle discrete commands ########
 
-        # Check for shotdown requests
+        # Check for shutdown requests
         if msg.buttons[3]:
             self.disp.show_state(BehaviorState.SHUTDOWN)
             self.sutdown_time.request_shutdown()
@@ -331,15 +335,22 @@ class MiniPupper(Node):
         # Hande activation state
         if command.activate_event:
             self.activated = not self.activated
-            if not self.activated:
+            self.activated_joy = not self.activated_joy
+            if not self.activated_joy:
                 self.disp.show_state(BehaviorState.DEACTIVATED)
             else:
                 # done with event
                 command.activate_event = 0
 
-        if self.activated:
+        if self.activated_joy:
             self.activated_by = 'joy'
             self.time_now = self.get_clock().now().nanoseconds
+
+        #TODO fix noice comng from joy
+        command.yaw_rate = 0.0
+        command.roll = 0.0
+        command.pitch = 0.0
+        command.height = 0.0
         self.joy_command = deepcopy(command)
 
 
