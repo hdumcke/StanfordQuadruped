@@ -88,7 +88,7 @@ wifis:
     dhcp4: true
     optional: true
     access-points:
-      %s:
+      "%s":
         password: "%s"
 """
 with open(network_conf_file, 'w') as fh:
