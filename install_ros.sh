@@ -19,6 +19,14 @@ yes | pip install numpy transforms3d pyserial
 yes | sudo pip install numpy transforms3d pyserial
 sudo apt-get install -y unzip
 
+##### fix joystick
+cd ~
+git clone https://github.com/stanfordroboticsclub/PS4Joystick.git
+sudo pip install PS4Joystick
+sudo systemctl disable joystick
+sudo systemctl disable restart_joy
+sudo systemctl disable joy_node
+
 source /opt/ros/humble/setup.bash
 cd ~/StanfordQuadruped/mini_pupper_ws
 rosdep update && rosdep install --from-path src --ignore-src -y --skip-keys microxrcedds_agent --skip-keys micro_ros_agent

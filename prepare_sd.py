@@ -27,18 +27,18 @@ def ask_user(prompt, var_name):
 
 
 def ask_questions():
-    if not 'wifi_ssid' in target_environment.keys():
+    if 'wifi_ssid' not in target_environment.keys():
         ask_user("Your WiFi SSID", 'wifi_ssid')
-    if not 'wifi_password' in target_environment.keys():
+    if 'wifi_password' not in target_environment.keys():
         ask_user("Your WiFi password", 'wifi_password')
-    if not 'ubuntu_password' in target_environment.keys():
+    if 'ubuntu_password' not in target_environment.keys():
         ask_user("Mini pupper user password", 'ubuntu_password')
-    if not 'hardware_version' in target_environment.keys():
+    if 'hardware_version' not in target_environment.keys():
         print("Which Mini Pupper Hardware do you want to install:\n")
         for i in range(len(hardware_version)):
             print("%s: %s" % (i + 1, hardware_version[i]))
         ask_user("Please enter number", 'hardware_version')
-    if not 'sd_path' in target_environment.keys():
+    if 'sd_path' not in target_environment.keys():
         ask_user("Full path to SD card", 'sd_path')
 
 
