@@ -17,13 +17,16 @@ then
 fi
 
 cd ~
+if [ ! -d ~/mini_pupper_bsp ]
+then
 [[ "$1" == "v1" ]] && git clone https://github.com/mangdangroboticsclub/mini_pupper_bsp.git mini_pupper_bsp
 [[ "$1" == "v2" ]] && git clone https://github.com/mangdangroboticsclub/mini_pupper_2_bsp.git mini_pupper_bsp
+fi
 [[ -d ~/mini_pupper_ros_bsp ]] || git clone https://github.com//mangdangroboticsclub/mini_pupper_ros_bsp.git
 [[ -d ~/StanfordQuadruped ]] || git clone https://github.com/mangdangroboticsclub/StanfordQuadruped.git /home/ubuntu/StanfordQuadruped
 
 cd ~/mini_pupper_ros_bsp
-sed -i "/reboot/d" setup.sh
+sed -i "s/reboot/echo reboot/" setup.sh
 ./setup.sh $1
 
 cd ~/StanfordQuadruped

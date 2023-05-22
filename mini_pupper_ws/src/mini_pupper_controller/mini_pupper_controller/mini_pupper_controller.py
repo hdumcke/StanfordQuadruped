@@ -212,8 +212,6 @@ class MiniPupper(Node):
         self.controller.run(self.state, command, self.disp)
 
         # Update the pwm widths going to the servos
-        self.get_logger().info("%.2f %.2f %.2f %.2f" % (command.height, command.yaw_rate, command.pitch, command.roll))
-        #self.get_logger().info("joint_angles: %s" % (self.state.joint_angles * 57.2958))
         self.hardware_interface.set_actuator_postions(self.state.joint_angles)
 
         self.publish_odometry()
@@ -314,7 +312,7 @@ class MiniPupper(Node):
         command.horizontal_velocity = np.array([x_vel, y_vel])
         command.yaw_rate = msg.axes[2] * self.config.max_yaw_rate
 
-        pitch = msg.axes[5] * self.config.max_pitch
+        pitch = msg.axes[3] * self.config.max_pitch
         deadbanded_pitch = deadband(
             pitch, self.config.pitch_deadband
         )
@@ -326,13 +324,13 @@ class MiniPupper(Node):
         )
         command.pitch = self.state.pitch + self.message_dt * pitch_rate
 
-        height_movement = msg.axes[13]
+        height_movement = msg.axes[5]
         command.height = self.state.height - self.message_dt * self.config.z_speed * height_movement
 
-        roll_movement = - msg.axes[12]
+        roll_movement = - msg.axes[4]
         command.roll = self.state.roll + self.message_dt * self.config.roll_speed * roll_movement
 
-        # Hande activation state
+        # Handle activation state
         if command.activate_event:
             self.activated = not self.activated
             self.activated_joy = not self.activated_joy
@@ -346,11 +344,6 @@ class MiniPupper(Node):
             self.activated_by = 'joy'
             self.time_now = self.get_clock().now().nanoseconds
 
-        #TODO fix noice comng from joy
-        command.yaw_rate = 0.0
-        command.roll = 0.0
-        command.pitch = 0.0
-        command.height = 0.0
         self.joy_command = deepcopy(command)
 
 

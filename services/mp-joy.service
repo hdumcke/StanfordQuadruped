@@ -1,0 +1,13 @@
+[Unit]
+Description=mini pupper joy service
+Requires=robot-ros.service
+After=robot-ros.service
+
+[Service]
+User=ubuntu
+ExecStart=/bin/bash --login -c 'source /home/ubuntu/.bashrc; /home/ubuntu/StanfordQuadruped/services/mp-joy.sh'
+KillSignal=2
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

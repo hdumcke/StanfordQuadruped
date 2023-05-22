@@ -22,7 +22,7 @@ sudo apt-get install -y unzip
 ##### fix joystick
 cd ~
 git clone https://github.com/stanfordroboticsclub/PS4Joystick.git
-sudo pip install PS4Joystick
+sudo pip install PS4Joystick/
 sudo systemctl disable joystick
 sudo systemctl disable restart_joy
 sudo systemctl disable joy_node
@@ -35,5 +35,7 @@ colcon build --executor sequential --symlink-install
 
 cd ~/StanfordQuadruped/services
 sudo ln -s $(realpath .)/robot-ros.service /etc/systemd/system/
+sudo ln -s $(realpath .)/mp-joy.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable robot-ros
+sudo systemctl enable mp-joy
