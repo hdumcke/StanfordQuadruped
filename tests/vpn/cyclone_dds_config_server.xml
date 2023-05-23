@@ -1,0 +1,16 @@
+<CycloneDDS>
+  <Domain>
+    <Id>any</Id>
+    <General>
+      <NetworkInterfaceAddress>auto</NetworkInterfaceAddress>
+      <AllowMulticast>false</AllowMulticast>
+      <EnableMulticastLoopback>true</EnableMulticastLoopback>
+    </General>
+    <Discovery>
+      <ParticipantIndex>0</ParticipantIndex>
+      <Peers>
+        <Peer Address="10.0.0.2:7410"/>
+      </Peers>
+    </Discovery>
+  </Domain>
+</CycloneDDS>
