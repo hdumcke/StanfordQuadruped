@@ -36,11 +36,5 @@ cd ~/StanfordQuadruped
 sudo systemctl disable servo_interface
 sudo systemctl disable display_interface
 
-#TODO remove after PR that enables uart2is merged
-### Enable UART5
-### RXD5 = Pin 13
-grep -q "uart5" /boot/firmware/config.txt || echo "dtoverlay=uart5" | sudo tee -a /boot/firmware/config.txt
-sudo sed -i "s/^dtoverlay=audremap/#dtoverlay=audremap/" /boot/firmware/config.txt
-
 echo "setup.sh finished at $(date)"
 sudo reboot
