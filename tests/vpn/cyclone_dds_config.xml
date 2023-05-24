@@ -12,7 +12,7 @@
             <Peer address="10.0.0.1"/>
             <Peer address="10.0.0.2"/>
             </Peers>
-            <ParticipantIndex>2</ParticipantIndex>
+            <ParticipantIndex>auto</ParticipantIndex>
         </Discovery>
     </Domain>
 </CycloneDDS>
