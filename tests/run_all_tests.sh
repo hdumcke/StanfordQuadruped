@@ -50,9 +50,9 @@ done
 # check ros topics
 echo "Checking ROS topics"
 ros2 topic list > /tmp/topics
-if cmp --silent -- /tmp/topics $BASEDIR/expected/topics; then
+if cmp --silent -- /tmp/topics $BASEDIR/expected_results/topics; then
   echo "ROS2 topics are OK"
 else
   echo "ROS2 topics are NOT OK"
-  diff /tmp/topics $BASEDIR/expected/topics
+  diff /tmp/topics $BASEDIR/expected_results/topics
 fi
